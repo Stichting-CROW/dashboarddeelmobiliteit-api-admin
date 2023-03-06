@@ -28,7 +28,6 @@ def list_users(organisation_id: int):
     """
     with db_helper.get_resource() as (cur, conn):
         try:
-            print(organisation_id)
             cur.execute(stmt, {
                 "filter_on_organisation_id": organisation_id == None, 
                 "organisation_id": organisation_id

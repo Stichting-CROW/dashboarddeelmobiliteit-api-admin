@@ -171,3 +171,33 @@ def list_organisations():
             conn.rollback()
             print(e)
             return False
+
+def get_view_data_access(grant_view_data_id: int):
+    stmt = """SELECT grant_view_data_id, owner_organisation_id, 
+        granted_organisation_id, granted_user
+        FROM view_data_access
+        WHERE grant_view_data_id = %(grant_view_data_id)s"""
+    with db_helper.get_resource() as (cur, conn):
+        try:
+            cur.execute(stmt, {"grant_view_data_id": grant_view_data_id})
+            return cur.fetchone()
+        except Exception as e:
+            conn.rollback()
+            print(e)
+            return False
+
+def delete_view_data_access_user(grant_view_data_id: int):
+    stmt = """
+        DELETE 
+        FROM view_data_access
+        WHERE grant_view_data_id = %(grant_view_data_id)s
+    """
+    with db_helper.get_resource() as (cur, conn):
+        try:
+            cur.execute(stmt, {"grant_view_data_id": grant_view_data_id})
+            conn.commit()
+            return True
+        except Exception as e:
+            print(e)
+            conn.rollback()
+            return False
