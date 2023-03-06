@@ -18,6 +18,41 @@ def create_user(user_account: UserAccount):
             conn.rollback()
             return False
         
+def get_user(user_id: str):
+    stmt = """
+        SELECT user_id, privileges, organisation_id
+        FROM user_account 
+        WHERE user_id = %(user_id)s;
+    """
+    with db_helper.get_resource() as (cur, conn):
+        try:
+            cur.execute(stmt, {
+                "user_id": user_id
+            })
+            return cur.fetchone()
+        except Exception as e:
+            conn.rollback()
+            print(e)
+            return False
+        
+def delete_user(user_id: str):
+    stmt = """
+        DELETE
+        FROM user_account 
+        WHERE user_id = %(user_id)s;
+    """
+    with db_helper.get_resource() as (cur, conn):
+        try:
+            cur.execute(stmt, {
+                "user_id": user_id
+            })
+            conn.commit()
+            return True
+        except Exception as e:
+            conn.rollback()
+            print(e)
+            return False
+
 def list_users(organisation_id: int):
     stmt = """
         SELECT organisation_id, user_id, privileges, name as organisation_name, type_of_organisation = 'ADMIN' as is_admin 

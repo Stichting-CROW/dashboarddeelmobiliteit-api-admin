@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from acl import get_acl
-from user import create_user, user_account, list_users
+from user import create_user, user_account, list_users, delete_user
 from organisation import (
     create_organisation, organisation, delete_organisation, list_organisations,
     grant_view_data_access_organisation, grant_view_data_access_user,
@@ -36,16 +36,16 @@ async def create_user_route(user_account: user_account.UserAccount, request: Req
 async def update_user():
     return {"message": "Hello World"}
 
-@app.delete("/user/delete", tags=["user"])
-async def delete_user():
-    return {"message": "Hello World"}
+@app.delete("/user/delete", tags=["user"], status_code=204)
+async def delete_user_route(user_id: str, request: Request):
+    delete_user.delete_user(request.state.acl, user_id)
 
 @app.get("/organisation/list", tags=["organisation"])
-async def list_organisation():
+async def list_organisation_route():
     return list_organisations.list_organisations()
 
 @app.get("/organisation/{organisation_id}", tags=["organisation"])
-async def get_organisation(organisation_id):
+async def get_organisation_route(organisation_id):
     return {"message": organisation_id}
 
 @app.post("/organisation/create", tags=["organisation"], status_code=201)
@@ -53,7 +53,7 @@ async def create_organisation_route(organisation: organisation.OrganisationWithD
     return create_organisation.create_organisation(request.state.acl, organisation)
 
 @app.put("/organisation/update", tags=["organisation"])
-async def update_organisation():
+async def update_organisation_route():
     return {"message": "Hello World"}
 
 @app.delete("/organisation/delete/{organisation_id}", tags=["organisation"], status_code=204)
