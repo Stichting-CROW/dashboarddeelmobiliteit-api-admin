@@ -65,7 +65,53 @@ def create_view_data_access_user(view_data_access: ViewDataAccessUser):
             print(e)
             conn.rollback()
             return False
+
+def list_given_data_access(organisation_id: int):
+    stmt = """
+        SELECT grant_view_data_id, owner_organisation_id, j1.name as owner_organisation_name,
+        granted_organisation_id, j2.name as granted_organisation_name, granted_user
+        FROM view_data_access
+        LEFT JOIN organisation j1
+        ON owner_organisation_id = j1.organisation_id
+        LEFT JOIN organisation j2
+        ON granted_organisation_id = j2.organisation_id
+        WHERE owner_organisation_id = %(owner_organisation_id)s;
+    """
+    with db_helper.get_resource() as (cur, conn):
+        try:
+            cur.execute(stmt, {
+                "owner_organisation_id": organisation_id, 
+            })
+            return cur.fetchall()
+        except Exception as e:
+            print(e)
+            conn.rollback()
+            return False
         
+def list_received_data_access(organisation_id: int, user_id: str):
+    stmt = """
+        SELECT grant_view_data_id, owner_organisation_id, j1.name as owner_organisation_name,
+        granted_organisation_id, j2.name as granted_organisation_name, granted_user
+        FROM view_data_access 
+        LEFT JOIN organisation j1
+        ON owner_organisation_id = j1.organisation_id
+        LEFT JOIN organisation j2
+        ON granted_organisation_id = j2.organisation_id
+        WHERE granted_organisation_id = %(granted_organisation_id)s
+        OR granted_user = %(granted_user)s;
+    """
+    with db_helper.get_resource() as (cur, conn):
+        try:
+            cur.execute(stmt, {
+                "granted_organisation_id": organisation_id, 
+                "granted_user": user_id
+            })
+            return cur.fetchall()
+        except Exception as e:
+            print(e)
+            conn.rollback()
+            return False
+
 def check_if_organisation_has_users(organisation_id: int):
     stmt = """
         SELECT count(*) as number_of_users

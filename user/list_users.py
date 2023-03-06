@@ -37,7 +37,6 @@ def convert_user_row(row):
     privileges = []
     if row["privileges"]:
         privileges = list(map(lambda x: PrivilegesEnum(x), row["privileges"]))
-    print(row)
     return UserAccountListItem(
         user_id=row["user_id"],
         privileges=privileges,

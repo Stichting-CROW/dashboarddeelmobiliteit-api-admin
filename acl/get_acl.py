@@ -25,6 +25,7 @@ def create_acl(row):
     if row["privileges"]:
         privileges = map(lambda x: PrivilegesEnum(x), row["privileges"])
     return acl.ACL(
+        user_id=row["user_id"],
         part_of_organisation=row["organisation_id"],
         privileges=privileges,
         is_admin=(row["type_of_organisation"] == "ADMIN")

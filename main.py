@@ -4,7 +4,8 @@ from acl import get_acl
 from user import create_user, user_account, list_users
 from organisation import (
     create_organisation, organisation, delete_organisation, list_organisations,
-    grant_view_data_access_organisation, grant_view_data_access_user
+    grant_view_data_access_organisation, grant_view_data_access_user,
+    list_received_data_access, list_granted_data_access
 )
 from organisation.view_data_access import ViewDataAccessOrganisation, ViewDataAccessUser
 
@@ -76,13 +77,14 @@ async def grant_user_data_access_route(view_data_access: ViewDataAccessUser, req
 # async def delete_organisation_route(organisation_id: str, request: Request):
 #     delete_organisation.delete_organisation(request.state.acl, organisation_id)
 
-# @app.get("/data_access/list_granted", tags=["data_access"], status_code=204)
-# async def delete_organisation_route(organisation_id: str, request: Request):
-#     delete_organisation.delete_organisation(request.state.acl, organisation_id)
+@app.get("/data_access/list_granted/{organisation_id}", tags=["data_access"], status_code=200)
+async def list_granted_data_access_route(organisation_id: str, request: Request):
+    return list_granted_data_access.list_granted_data_access(
+        request.state.acl, organisation_id)
 
-# @app.get("/data_access/list_received", tags=["data_access"], status_code=204)
-# async def delete_organisation_route(organisation_id: str, request: Request):
-#     delete_organisation.delete_organisation(request.state.acl, organisation_id)
+@app.get("/data_access/list_received", tags=["data_access"], status_code=200)
+async def list_received_data_access_route(request: Request):
+    return list_received_data_access.list_received_data_access(request.state.acl)
 
 @app.get("/organisation/yearly_cost_overview", tags=["organisation"])
 async def root():

@@ -2,7 +2,7 @@ from db_helper import db_helper
 
 def get_organisation_and_privileges(username):
     stmt = """
-        SELECT organisation_id, privileges, type_of_organisation
+        SELECT user_id, organisation_id, privileges, type_of_organisation
         FROM user_account
         JOIN organisation
         USING (organisation_id)
