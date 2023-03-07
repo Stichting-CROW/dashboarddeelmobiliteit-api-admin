@@ -8,10 +8,12 @@ def create_user(user_account: UserAccount):
     """
     with db_helper.get_resource() as (cur, conn):
         try:
-            cur.execute(stmt, {"user_id": user_account.user_id, 
-                               "privileges": user_account.privileges, 
-                               "organisation_id": user_account.organisation_id
-                                })
+            cur.execute(stmt, 
+            {   
+                "user_id": user_account.user_id, 
+                "privileges": user_account.privileges, 
+                "organisation_id": user_account.organisation_id
+            })
             conn.commit()
             return True
         except Exception as e:
@@ -34,7 +36,29 @@ def get_user(user_id: str):
             conn.rollback()
             print(e)
             return False
-        
+
+def update_user(user_account: UserAccount):
+    stmt = """
+        UPDATE user_account 
+        SET privileges = %(privileges)s,
+        organisation_id = %(organisation_id)s
+        WHERE user_id = %(user_id)s;
+    """
+    with db_helper.get_resource() as (cur, conn):
+        try:
+            cur.execute(stmt, 
+            {
+                "privileges": user_account.privileges, 
+                "organisation_id": user_account.organisation_id,
+                "user_id": user_account.user_id
+            })
+            conn.commit()
+            return True
+        except Exception as e:
+            print(e)
+            conn.rollback()
+            return False
+
 def delete_user(user_id: str):
     stmt = """
         DELETE

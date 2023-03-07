@@ -1,7 +1,9 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from acl import get_acl
-from user import create_user, user_account, list_users, delete_user
+from user import (
+    create_user, user_account, list_users, delete_user, update_user
+)
 from organisation import (
     create_organisation, organisation, delete_organisation, list_organisations,
     grant_view_data_access_organisation, grant_view_data_access_user,
@@ -33,8 +35,8 @@ async def create_user_route(user_account: user_account.UserAccount, request: Req
     return create_user.create_user(request.state.acl, user_account_object=user_account)
 
 @app.put("/user/update", tags=["user"])
-async def update_user():
-    return {"message": "Hello World"}
+async def update_user_route(user_account: user_account.UserAccount, request: Request):
+    return update_user.update_user(request.state.acl, user_account)
 
 @app.delete("/user/delete", tags=["user"], status_code=204)
 async def delete_user_route(user_id: str, request: Request):
