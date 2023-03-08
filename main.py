@@ -7,7 +7,8 @@ from user import (
 from organisation import (
     create_organisation, organisation, delete_organisation, list_organisations,
     grant_view_data_access_organisation, grant_view_data_access_user,
-    list_received_data_access, list_granted_data_access, revoke_view_data_access
+    list_received_data_access, list_granted_data_access, revoke_view_data_access,
+    update_organisation
 )
 from organisation.view_data_access import ViewDataAccessOrganisation, ViewDataAccessUser
 
@@ -55,8 +56,8 @@ async def create_organisation_route(organisation: organisation.OrganisationWithD
     return create_organisation.create_organisation(request.state.acl, organisation)
 
 @app.put("/organisation/update", tags=["organisation"])
-async def update_organisation_route():
-    return {"message": "Hello World"}
+async def update_organisation_route(organisation: organisation.OrganisationWithDetails, request: Request):
+    return update_organisation.update_organisation(request.state.acl, organisation)
 
 @app.delete("/organisation/delete/{organisation_id}", tags=["organisation"], status_code=204)
 async def delete_organisation_route(organisation_id: str, request: Request):

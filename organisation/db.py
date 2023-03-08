@@ -1,9 +1,9 @@
 from db_helper import db_helper
-from organisation.organisation import Organisation
+from organisation.organisation import OrganisationWithDetails, Organisation
 from organisation.view_data_access import ViewDataAccessUser, ViewDataAccessOrganisation
 import json
 
-def create_organisation(organisation: Organisation):
+def create_organisation(organisation: OrganisationWithDetails):
     stmt = """
         INSERT INTO organisation (name, type_of_organisation, data_owner_of_municipalities, data_owner_of_operators, organisation_details) 
         VALUES (%(name)s, %(type_of_organisation)s, %(data_owner_of_municipalities)s, %(data_owner_of_operators)s, %(organisation_details)s)
@@ -21,6 +21,71 @@ def create_organisation(organisation: Organisation):
             conn.commit()
             organisation.organisation_id = cur.fetchone()["organisation_id"]
             return organisation
+        except Exception as e:
+            print(e)
+            conn.rollback()
+            return False
+        
+def get_organisation(organisation_id: int):
+    stmt = """
+        SELECT organisation_id, name, type_of_organisation, 
+        data_owner_of_municipalities, data_owner_of_operators, organisation_details
+        FROM organisation
+        WHERE organisation_id = %(organisation_id)s;
+    """
+    with db_helper.get_resource() as (cur, conn):
+        try:
+            cur.execute(stmt, {
+                "organisation_id": organisation_id
+            })
+            return cur.fetchone()
+        except Exception as e:
+            print(e)
+            conn.rollback()
+            return False
+        
+def update_organisation(organisation: OrganisationWithDetails):
+    stmt = """
+        UPDATE organisation 
+        SET name = %(name)s, 
+        type_of_organisation = %(type_of_organisation)s, 
+        data_owner_of_municipalities = %(data_owner_of_municipalities)s, 
+        data_owner_of_operators = %(data_owner_of_operators)s, 
+        organisation_details = %(organisation_details)s
+        WHERE organisation_id = %(organisation_id)s;
+    """
+    with db_helper.get_resource() as (cur, conn):
+        try:
+            cur.execute(stmt, {
+                "name": organisation.name, 
+                "type_of_organisation": organisation.type_of_organisation, 
+                "data_owner_of_municipalities": organisation.data_owner_of_municipalities,
+                "data_owner_of_operators": organisation.data_owner_of_operators,
+                "organisation_details": json.dumps(organisation.organisation_details),
+                "organisation_id": organisation.organisation_id
+            })
+            conn.commit()
+            return True
+        except Exception as e:
+            print(e)
+            conn.rollback()
+            return False
+
+def create_historical_organisation_detail(organisation: OrganisationWithDetails):
+    stmt = """
+        INSERT 
+        INTO organisation_history
+        (organisation_id, details, timestamp)
+        VALUES (%(organisation_id)s, %(organisation_details)s, NOW());
+    """
+    with db_helper.get_resource() as (cur, conn):
+        try:
+            cur.execute(stmt, {
+                "organisation_id": organisation.organisation_id,
+                "organisation_details": json.dumps(organisation.organisation_details)
+            })
+            conn.commit()
+            return True
         except Exception as e:
             print(e)
             conn.rollback()

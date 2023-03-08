@@ -47,3 +47,12 @@ CREATE TABLE view_data_access (
     UNIQUE(owner_organisation_id, granted_organisation_id),
     UNIQUE(owner_organisation_id, granted_user)
 );
+
+CREATE INDEX view_data_access_owner_organisation_index
+ON view_data_access (owner_organisation_id);
+
+CREATE INDEX view_data_access_granted_organisation_index
+ON view_data_access (granted_organisation_id);
+
+CREATE INDEX view_data_access_granted_user_index
+ON view_data_access (granted_user);
