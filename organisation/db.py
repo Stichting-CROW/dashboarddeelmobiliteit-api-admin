@@ -91,6 +91,24 @@ def create_historical_organisation_detail(organisation: OrganisationWithDetails)
             conn.rollback()
             return False
 
+def list_organisation_details(organisation_id: int):
+    stmt = """
+        SELECT organisation_history_id, organisation_id, details, timestamp
+        FROM organisation_history
+        WHERE organisation_id = %(organisation_id)s
+        ORDER BY organisation_history_id DESC;
+    """
+    with db_helper.get_resource() as (cur, conn):
+        try:
+            cur.execute(stmt, {
+                "organisation_id": organisation_id
+            })
+            return cur.fetchall()
+        except Exception as e:
+            print(e)
+            conn.rollback()
+            return False
+
 def create_view_data_access_organisation(view_data_access: ViewDataAccessOrganisation):
     stmt = """
         INSERT INTO view_data_access (owner_organisation_id, granted_organisation_id) 

@@ -16,10 +16,17 @@ RETURNING organisation_id;
 
 CREATE TABLE organisation_history (
     organisation_history_id       SERIAL PRIMARY KEY,
-    organisation_id               INT,
+    organisation_id               INT NOT NULL,
     details                       JSONB,
-    TIMESTAMP                     TIMESTAMP
+    TIMESTAMP                     TIMESTAMP NOT NULL,
+    CONSTRAINT fk_organisation_id
+      FOREIGN KEY(organisation_id) 
+	  REFERENCES organisation(organisation_id)
+	  ON DELETE CASCADE
 );
+
+CREATE INDEX organisation_history_organisation_id_index
+ON organisation_history (organisation_id);
 
 CREATE TABLE user_account (
     user_id             VARCHAR(255) PRIMARY KEY,       -- =email

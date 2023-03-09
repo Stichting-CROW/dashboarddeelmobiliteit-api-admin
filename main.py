@@ -5,10 +5,10 @@ from user import (
     create_user, user_account, list_users, delete_user, update_user
 )
 from organisation import (
-    create_organisation, organisation, delete_organisation, list_organisations,
+    create_organisation, list_organisation_history, organisation, delete_organisation, list_organisations,
     grant_view_data_access_organisation, grant_view_data_access_user,
     list_received_data_access, list_granted_data_access, revoke_view_data_access,
-    update_organisation
+    update_organisation, get_organisation
 )
 from organisation.view_data_access import ViewDataAccessOrganisation, ViewDataAccessUser
 
@@ -47,9 +47,9 @@ async def delete_user_route(user_id: str, request: Request):
 async def list_organisation_route():
     return list_organisations.list_organisations()
 
-@app.get("/organisation/{organisation_id}", tags=["organisation"])
-async def get_organisation_route(organisation_id):
-    return {"message": organisation_id}
+@app.get("/organisation", tags=["organisation"])
+async def get_organisation_route(request: Request, organisation_id: int | None = None):
+    return get_organisation.get_organisation(organisation_id, request.state.acl)
 
 @app.post("/organisation/create", tags=["organisation"], status_code=201)
 async def create_organisation_route(organisation: organisation.OrganisationWithDetails, request: Request):
@@ -62,6 +62,10 @@ async def update_organisation_route(organisation: organisation.OrganisationWithD
 @app.delete("/organisation/delete/{organisation_id}", tags=["organisation"], status_code=204)
 async def delete_organisation_route(organisation_id: str, request: Request):
     delete_organisation.delete_organisation(request.state.acl, organisation_id)
+
+@app.get("/organisation/details_history/{organisation_id}", tags=["organisation"])
+async def list_organisation_details_history_route(organisation_id: str, request: Request):
+    return list_organisation_history.list_organisation_detail_history(request.state.acl, organisation_id=organisation_id)
 
 @app.post("/data_access/grant_organisation", tags=["data_access"], status_code=201)
 async def grant_organisation_data_access_route(
