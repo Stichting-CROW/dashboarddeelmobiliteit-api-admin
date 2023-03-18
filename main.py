@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from acl import get_acl
 from user import (
     create_user, user_account, list_users, delete_user, update_user
@@ -11,6 +11,9 @@ from organisation import (
     update_organisation, get_organisation
 )
 from organisation.view_data_access import ViewDataAccessOrganisation, ViewDataAccessUser
+from yearly_cost_overview import calculate_yearly_cost
+from datetime import date
+
 
 app = FastAPI()
 
@@ -94,8 +97,14 @@ async def list_received_data_access_route(request: Request):
     return list_received_data_access.list_received_data_access(request.state.acl)
 
 @app.get("/organisation/yearly_cost_overview", tags=["organisation"])
-async def root():
-    return {"message": "Hello World"}
+async def calculate_yearly_cost_overview(reference_date: date, request: Request):
+    excel_sheet = calculate_yearly_cost.calculate(request.state.acl, reference_date)
+    file_name = "jaarlijkse_kosten_overzicht_peil_datum_{}.xlsx".format(reference_date.isoformat())
+    return StreamingResponse(
+        excel_sheet, 
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={'Content-Disposition': 'attachment; filename="{}"'.format(file_name)}
+    )
 
 @app.get("/feed/list", tags=["feed"])
 async def root():

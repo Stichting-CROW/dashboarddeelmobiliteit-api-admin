@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-api
+  labels:
+    app: admin-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-api
+  template:
+    metadata:
+      labels:
+        app: admin-api
+    spec:
+      containers:
+      - name: admin-api
+        image: ghcr.io/stichting-crow/dashboarddeelmobiliteit-admin-api:0.1
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: DB_HOST
+            value: 10.133.75.95
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: db-password-deelfietsdashboard
+          - name: DB_USER
+            value: deelfietsdashboard
+          - name: DB_PORT
+            value: "5432"
+          - name: TZ
+            value: Europe/Amsterdam
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-api
+spec:
+  selector:
+    app: admin-api
+  ports:
+  - name: admin-api-http
+    protocol: TCP
+    port: 80
+
