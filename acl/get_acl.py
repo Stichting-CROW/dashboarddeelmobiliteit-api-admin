@@ -23,7 +23,7 @@ def get_acl_for_user_id(user_id: str):
 def create_acl(row):
     privileges = []
     if row["privileges"]:
-        privileges = map(lambda x: PrivilegesEnum(x), row["privileges"])
+        privileges = list(map(lambda x: PrivilegesEnum(x), row["privileges"]))
     return acl.ACL(
         user_id=row["user_id"],
         part_of_organisation=row["organisation_id"],

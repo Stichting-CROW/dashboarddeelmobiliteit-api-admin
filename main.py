@@ -28,6 +28,7 @@ async def authorize(request: Request, call_next):
 
 @app.get("/user/acl", tags=["user"])
 async def list_users_route(request: Request):
+    print(request.state.acl.privileges)
     return request.state.acl
 
 @app.get("/user/list", tags=["user"])

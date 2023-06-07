@@ -8,7 +8,7 @@ from pydantic import BaseModel
 def is_allowed_to_list_granted_data_access(acl: acl.ACL, organisation_id: int):
     if acl.is_admin == True:
         return True
-    if (acl.organisation_id == organisation_id):
+    if (acl.part_of_organisation == organisation_id):
         return True
     return False
 

@@ -6,7 +6,7 @@ from fastapi import HTTPException
 def is_allowed_to_grant_data_access(acl: acl.ACL, view_data_access: ViewDataAccess):
     if acl.is_admin == True:
         return True
-    if ("ORGANISATION_ADMIN" in acl.privileges and acl.organisation_id == view_data_access.owner_organisation_id):
+    if ("ORGANISATION_ADMIN" in acl.privileges and acl.part_of_organisation == view_data_access.owner_organisation_id):
         return True
     return False
 

@@ -5,7 +5,7 @@ from fastapi import HTTPException
 def is_allowed_to_update_user(acl: acl.ACL, organisation_id: int):
     if acl.is_admin == True:
         return True
-    if ("ORGANISATION_ADMIN" in acl.privileges and acl.organisation_id == organisation_id):
+    if ("ORGANISATION_ADMIN" in acl.privileges and acl.part_of_organisation == organisation_id):
         return True
     return False
 

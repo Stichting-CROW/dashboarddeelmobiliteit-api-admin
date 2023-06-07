@@ -10,7 +10,7 @@ def is_allowed_to_delete_user(acl: acl.ACL, to_delete_user_id: str, user_organis
     if (acl.is_admin == True):
         return True
     if ("ORGANISATION_ADMIN" in acl.privileges 
-        and acl.organisation_id == user_organisation_id and acl.user_id != to_delete_user_id):
+        and acl.part_of_organisation == user_organisation_id and acl.user_id != to_delete_user_id):
         return True
     return False
 
