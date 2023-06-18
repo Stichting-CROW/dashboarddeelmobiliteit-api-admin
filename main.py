@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Path
 from fastapi.responses import JSONResponse, StreamingResponse
+from typing import Annotated
 from acl import get_acl
 from user import (
     create_user, user_account, list_users, delete_user, update_user
@@ -64,11 +65,17 @@ async def update_organisation_route(organisation: organisation.OrganisationWithD
     return update_organisation.update_organisation(request.state.acl, organisation)
 
 @app.delete("/organisation/delete/{organisation_id}", tags=["organisation"], status_code=204)
-async def delete_organisation_route(organisation_id: str, request: Request):
+async def delete_organisation_route(
+        organisation_id: Annotated[int, Path(title="The ID of the organisation you like to delete.")],
+        request: Request
+    ):
     delete_organisation.delete_organisation(request.state.acl, organisation_id)
 
 @app.get("/organisation/details_history/{organisation_id}", tags=["organisation"])
-async def list_organisation_details_history_route(organisation_id: str, request: Request):
+async def list_organisation_details_history_route(
+        organisation_id: Annotated[int, Path(title="The ID of the organisation you like to see more history off.")],
+        request: Request
+    ):
     return list_organisation_history.list_organisation_detail_history(request.state.acl, organisation_id=organisation_id)
 
 @app.post("/data_access/grant_organisation", tags=["data_access"], status_code=201)
@@ -85,11 +92,16 @@ async def grant_user_data_access_route(view_data_access: ViewDataAccessUser, req
         request.state.acl, view_data_access=view_data_access)
 
 @app.delete("/data_access/revoke/{grant_view_data_id}", tags=["data_access"], status_code=204)
-async def revoke_data_access_route(grant_view_data_id: str, request: Request):
+async def revoke_data_access_route(
+        grant_view_data_id: Annotated[int, Path(title="The ID of the granted_view you would like to remove.")],
+        request: Request
+    ):
     revoke_view_data_access.revoke_data_access(request.state.acl, grant_view_data_id=grant_view_data_id)
 
 @app.get("/data_access/list_granted/{organisation_id}", tags=["data_access"], status_code=200)
-async def list_granted_data_access_route(organisation_id: str, request: Request):
+async def list_granted_data_access_route(
+    organisation_id: Annotated[int, Path(title="The ID of the organisation you like to receive granted data access from.")], 
+    request: Request):
     return list_granted_data_access.list_granted_data_access(
         request.state.acl, organisation_id)
 

@@ -13,7 +13,7 @@ def is_allowed_to_list_granted_data_access(acl: acl.ACL, organisation_id: int):
     return False
 
 # Any user is allowed to receive this data
-def list_granted_data_access(acl_user: acl.ACL, organisation_id: str):
+def list_granted_data_access(acl_user: acl.ACL, organisation_id: int):
     if not is_allowed_to_list_granted_data_access(acl=acl_user, organisation_id=organisation_id):
         raise HTTPException(status_code=403, detail="user is not allowed to list granted_data access of other organisations.")
 
