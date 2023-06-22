@@ -10,7 +10,7 @@ from fastapi import HTTPException
 def is_allowed_to_create_user(acl: acl.ACL, user_account: user_account.UserAccount):
     if (acl.is_admin == True):
         return True
-    if ("ORGANISATION_ADMIN" in acl.privileges and acl.part_of_organisation == user_account.organisation_id):
+    if ("ORGANISATION_ADMIN" in acl.privileges and (acl.part_of_organisation == user_account.organisation_id or user_account.organisation_id == 2)):
         return True
     
     return False
