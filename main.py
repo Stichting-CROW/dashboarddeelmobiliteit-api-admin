@@ -12,7 +12,7 @@ from organisation import (
     update_organisation, get_organisation
 )
 from apikey import (
-    create_apikey, list_apikeys
+    create_apikey, list_apikeys, delete_apikey
 )
 from organisation.view_data_access import ViewDataAccessOrganisation, ViewDataAccessUser
 from yearly_cost_overview import calculate_yearly_cost
@@ -130,9 +130,9 @@ async def list_apikeys_route(request: Request):
 async def create_apikey_route(request: Request):
     return create_apikey.create_apikey(request.state.acl)
 
-# @app.delete("/apikey/delete", tags=["apikey"], status_code=204)
-# async def delete_apikey(apikey_id: str, request: Request):
-#     #delete_user.delete_user(request.state.acl, user_id)
+@app.delete("/apikey/delete", tags=["apikey"], status_code=204)
+async def delete_apikey_route(apikey_id: str, request: Request):
+    delete_apikey.delete_apikey(request.state.acl, apikey_id)
 
 @app.get("/feed/list", tags=["feed"])
 async def root():
