@@ -12,7 +12,7 @@ from organisation import (
     update_organisation, get_organisation
 )
 from apikey import (
-    create_apikey, list_apikeys, delete_apikey
+    create_apikey, list_apikeys, delete_apikey, delete_consumer
 )
 from organisation.view_data_access import ViewDataAccessOrganisation, ViewDataAccessUser
 from yearly_cost_overview import calculate_yearly_cost

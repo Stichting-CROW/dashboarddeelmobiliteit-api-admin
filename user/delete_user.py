@@ -5,6 +5,7 @@ from user import db
 from acl import acl
 from fastapi import HTTPException
 import urllib.parse
+from apikey import delete_consumer
 
 def is_allowed_to_delete_user(acl: acl.ACL, to_delete_user_id: str, user_organisation_id: str):
     if (acl.is_admin == True):
@@ -17,6 +18,8 @@ def is_allowed_to_delete_user(acl: acl.ACL, to_delete_user_id: str, user_organis
 def delete_user(acl: acl.ACL, user_id: str):
     user_id = user_id.lower()
     user_row = db.get_user(user_id)
+    # Delete all apikeys.
+    delete_consumer.delete_consumer(user_id)
     
     if not user_row:
         raise HTTPException(status_code=404, detail="user doesn't exist")

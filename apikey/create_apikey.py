@@ -6,7 +6,7 @@ from apikey import create_consumer, apikey
 
 def call_create_apikey(username: str) -> apikey.Apikey:
     base_url_kong_admin = os.getenv("BASE_URL_KONG_ADMIN")
-    url = base_url_kong_admin + f"/consumers/{username}/key-auth"
+    url = f"{base_url_kong_admin}/consumers/{username}/key-auth"
     r = requests.request("POST", url)
     if r.status_code != 201:
         raise HTTPException(status_code=500, detail="Creating apikey not possible")

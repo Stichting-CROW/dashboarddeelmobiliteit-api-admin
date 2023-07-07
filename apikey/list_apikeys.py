@@ -12,7 +12,7 @@ class ApikeyListing(BaseModel):
 
 def call_list_apikeys(username: str) -> List[apikey.Apikey]:
     base_url_kong_admin = os.getenv("BASE_URL_KONG_ADMIN")
-    url = base_url_kong_admin + f"/consumers/{username}/key-auth"
+    url = f"{base_url_kong_admin}/consumers/{username}/key-auth"
     r = requests.request("GET", url)
     if r.status_code != 200:
         print(r.text)
