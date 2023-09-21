@@ -11,7 +11,7 @@ CREATE TABLE organisation (
 );
 
 INSERT INTO organisation (name, type_of_organisation)
-VALUES ('CROW', 'ADMIN')
+VALUES ('change to your organisation name', 'ADMIN')
 RETURNING organisation_id;
 
 CREATE TABLE organisation_history (
