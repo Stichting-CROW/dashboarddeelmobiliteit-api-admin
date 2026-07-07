@@ -109,7 +109,9 @@ async def list_granted_data_access_route(
         request.state.acl, organisation_id)
 
 @app.get("/data_access/list_received", tags=["data_access"], status_code=200)
-async def list_received_data_access_route(request: Request):
+async def list_received_data_access_route(request: Request, user_id: str | None = None):
+    if user_id:
+        return list_received_data_access.list_received_data_access_for_user(request.state.acl, user_id)
     return list_received_data_access.list_received_data_access(request.state.acl)
 
 @app.get("/organisation/yearly_cost_overview", tags=["organisation"])
