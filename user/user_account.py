@@ -13,5 +13,6 @@ class UserAccount(BaseModel):
     organisation_id: int
 
 class UserAccountSuccesfullyCreated(BaseModel):
-    user_account:       UserAccount
-    generated_password: str
+    user_account: UserAccount
+    email_text:   str
+    email_sent:   bool
