@@ -2,35 +2,6 @@ from db_helper import db_helper
 from mailing.mailing import MailingFilters
 
 
-CREATE_TABLE_STMT = """
-    CREATE TABLE IF NOT EXISTS mailing (
-        mailing_id                  SERIAL PRIMARY KEY,
-        subject                     TEXT NOT NULL,
-        body_markdown               TEXT NOT NULL,
-        filter_organisation_id      INT,
-        filter_core_group_only      BOOLEAN NOT NULL DEFAULT false,
-        filter_microhub_edit_only   BOOLEAN NOT NULL DEFAULT false,
-        is_test                     BOOLEAN NOT NULL DEFAULT false,
-        recipient_count             INT NOT NULL,
-        sent_by                     VARCHAR(255) NOT NULL,
-        sent_at                     TIMESTAMP NOT NULL DEFAULT now()
-    );
-"""
-
-
-def ensure_table():
-    """Create the mailing table when it doesn't exist yet (idempotent)."""
-    with db_helper.get_resource() as (cur, conn):
-        try:
-            cur.execute(CREATE_TABLE_STMT)
-            conn.commit()
-            return True
-        except Exception as e:
-            print("Could not ensure mailing table exists:", e)
-            conn.rollback()
-            return False
-
-
 def list_recipients(filters: MailingFilters):
     """Return a list of e-mail addresses (user_id) matching the filters."""
     stmt = """

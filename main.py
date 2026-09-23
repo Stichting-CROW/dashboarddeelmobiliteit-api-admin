@@ -17,17 +17,11 @@ from apikey import (
 from organisation.view_data_access import ViewDataAccessOrganisation, ViewDataAccessUser
 from yearly_cost_overview import calculate_yearly_cost
 from mailing import mailing_service
-from mailing import db as mailing_db
 from mailing.mailing import MailingFilters, MailingRequest, MailingPreviewRequest
 from datetime import date
 
 
 app = FastAPI()
-
-@app.on_event("startup")
-async def on_startup():
-    # Idempotent: creates the 'mailing' table on first deploy.
-    mailing_db.ensure_table()
 
 @app.middleware("http")
 async def authorize(request: Request, call_next):
