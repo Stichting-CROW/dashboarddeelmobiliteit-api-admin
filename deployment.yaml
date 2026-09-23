@@ -32,6 +32,24 @@ spec:
             value: "5432"
           - name: TZ
             value: Europe/Amsterdam
+          # SMTP settings for the admin "E-mail gebruikers" mailing feature
+          - name: SMTP_HOST
+            value: smtp.example.com
+          - name: SMTP_PORT
+            value: "587"
+          - name: SMTP_SECURITY
+            value: starttls
+          - name: SMTP_USER
+            value: info@dashboarddeelmobiliteit.nl
+          - name: SMTP_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: smtp-password
+          - name: SMTP_FROM
+            value: info@dashboarddeelmobiliteit.nl
+          - name: SMTP_FROM_NAME
+            value: Dashboard Deelmobiliteit
 ---
 apiVersion: v1
 kind: Service

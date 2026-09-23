@@ -3,4 +3,5 @@ uvicorn[standard]==0.20.0
 PyJWT==2.6.0
 requests==2.31.0
 psycopg2==2.9.5
-XlsxWriter==3.0.9 
+XlsxWriter==3.0.9
+Markdown==3.6

@@ -63,3 +63,18 @@ ON view_data_access (granted_organisation_id);
 
 CREATE INDEX view_data_access_granted_user_index
 ON view_data_access (granted_user);
+
+-- Mailings sent to users from the admin "E-mail gebruikers" page.
+-- (Also created automatically at API startup via CREATE TABLE IF NOT EXISTS.)
+CREATE TABLE mailing (
+    mailing_id                  SERIAL PRIMARY KEY,
+    subject                     TEXT NOT NULL,
+    body_markdown               TEXT NOT NULL,
+    filter_organisation_id      INT,
+    filter_core_group_only      BOOLEAN NOT NULL DEFAULT false,
+    filter_microhub_edit_only   BOOLEAN NOT NULL DEFAULT false,
+    is_test                     BOOLEAN NOT NULL DEFAULT false,
+    recipient_count             INT NOT NULL,
+    sent_by                     VARCHAR(255) NOT NULL,
+    sent_at                     TIMESTAMP NOT NULL DEFAULT now()
+);
