@@ -18,6 +18,8 @@ from organisation.view_data_access import ViewDataAccessOrganisation, ViewDataAc
 from yearly_cost_overview import calculate_yearly_cost
 from mailing import mailing_service
 from mailing.mailing import MailingFilters, MailingRequest, MailingPreviewRequest
+from feed import feed_service
+from feed.feed import FeedCreate, FeedUpdate, FeedValidateRequest
 from datetime import date
 
 
@@ -166,6 +168,28 @@ async def mailing_send_route(mailing: MailingRequest, request: Request):
 async def mailing_last_route(request: Request):
     return mailing_service.get_last(request.state.acl)
 
+# Feed routes are synchronous so FastAPI runs them in its thread pool; validating
+# a feed can take up to a minute and must not block other requests.
 @app.get("/feed/list", tags=["feed"])
-async def root():
-    return {"message": "Hello World"}
+def feed_list_route(request: Request):
+    return feed_service.list_feeds(request.state.acl)
+
+@app.get("/feed/vehicle_types", tags=["feed"])
+def feed_vehicle_types_route(request: Request):
+    return feed_service.list_vehicle_types(request.state.acl)
+
+@app.get("/feed/{feed_id}/credentials", tags=["feed"])
+def feed_credentials_route(feed_id: int, request: Request):
+    return feed_service.get_credentials(request.state.acl, feed_id)
+
+@app.post("/feed/create", tags=["feed"], status_code=201)
+def feed_create_route(feed: FeedCreate, request: Request):
+    return feed_service.create_feed(request.state.acl, feed)
+
+@app.put("/feed/update", tags=["feed"])
+def feed_update_route(feed: FeedUpdate, request: Request):
+    return feed_service.update_feed(request.state.acl, feed)
+
+@app.post("/feed/validate", tags=["feed"])
+def feed_validate_route(feed: FeedValidateRequest, request: Request):
+    return feed_service.validate_feed(request.state.acl, feed)
