@@ -16,6 +16,8 @@ from apikey import (
 )
 from organisation.view_data_access import ViewDataAccessOrganisation, ViewDataAccessUser
 from yearly_cost_overview import calculate_yearly_cost
+from mailing import mailing_service
+from mailing.mailing import MailingFilters, MailingRequest, MailingPreviewRequest
 from datetime import date
 
 
@@ -133,6 +135,36 @@ async def create_apikey_route(request: Request):
 @app.delete("/apikey/delete", tags=["apikey"], status_code=204)
 async def delete_apikey_route(apikey_id: str, request: Request):
     delete_apikey.delete_apikey(request.state.acl, apikey_id)
+
+@app.get("/mailing/recipients", tags=["mailing"])
+async def mailing_recipients_route(
+        request: Request,
+        organisation_id: int | None = None,
+        core_group_only: bool = False,
+        microhub_edit_only: bool = False
+    ):
+    filters = MailingFilters(
+        organisation_id=organisation_id,
+        core_group_only=core_group_only,
+        microhub_edit_only=microhub_edit_only
+    )
+    return mailing_service.list_recipients(request.state.acl, filters)
+
+@app.post("/mailing/preview", tags=["mailing"])
+async def mailing_preview_route(mailing: MailingPreviewRequest, request: Request):
+    return mailing_service.preview(request.state.acl, mailing)
+
+@app.post("/mailing/send_test", tags=["mailing"])
+async def mailing_send_test_route(mailing: MailingRequest, request: Request):
+    return mailing_service.send_test(request.state.acl, mailing)
+
+@app.post("/mailing/send", tags=["mailing"])
+async def mailing_send_route(mailing: MailingRequest, request: Request):
+    return mailing_service.send_to_recipients(request.state.acl, mailing)
+
+@app.get("/mailing/last", tags=["mailing"])
+async def mailing_last_route(request: Request):
+    return mailing_service.get_last(request.state.acl)
 
 @app.get("/feed/list", tags=["feed"])
 async def root():
