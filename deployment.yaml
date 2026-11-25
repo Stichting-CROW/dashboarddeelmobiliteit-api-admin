@@ -50,6 +50,14 @@ spec:
             value: info@dashboarddeelmobiliteit.nl
           - name: SMTP_FROM_NAME
             value: Dashboard Deelmobiliteit
+          # Feed validator service (dd-importer-v2 cmd/feed_validator) for the feed management page
+          - name: FEED_VALIDATOR_URL
+            value: http://feed-validator
+          - name: FEED_VALIDATOR_TOKEN
+            valueFrom:
+              secretKeyRef:
+                key: token
+                name: feed-validator-token
 ---
 apiVersion: v1
 kind: Service
